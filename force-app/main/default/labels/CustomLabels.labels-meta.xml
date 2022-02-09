@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Account_Low_Revenue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Account Low Revenue</shortDescription>
+        <value>50000</value>
+    </labels>
+    <labels>
+        <fullName>Account_Medium_Revenue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Account Medium Revenue</shortDescription>
+        <value>100000</value>
+    </labels>
+    <labels>
+        <fullName>Agent_High_Priority</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Agent High Priority</shortDescription>
+        <value>0050900000ARvjOAAT</value>
+    </labels>
+    <labels>
+        <fullName>Agent_Low_Priority</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Agent Low Priority</shortDescription>
+        <value>0050900000ARvj9AAD</value>
+    </labels>
+    <labels>
+        <fullName>Agent_Medium_Priority</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Agent Medium Priority</shortDescription>
+        <value>0050900000ARvjEAAT</value>
+    </labels>
+</CustomLabels>
