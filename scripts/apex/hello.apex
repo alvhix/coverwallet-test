@@ -5,6 +5,18 @@
 // You can also execute the entire file by running the command:
 //     SFDX: Execute Anonymous Apex with Editor Contents
 
-string tempvar = 'Enter_your_name_here';
-System.debug('Hello World!');
-System.debug('My name is ' + tempvar);
+System.debug(Integer.valueOf(Math.random() * 1000 + 1));
+System.debug(Integer.valueOf(Math.random() * 175000));
+Blob b = Crypto.GenerateAESKey(128);
+String result = 'Test-' + EncodingUtil.convertToHex(b);
+System.debug(result);
+
+String uuid1 = String.valueOf(Integer.valueOf(Math.random() * 123456))
+    .leftPad(6, '0');
+String uuid2 = String.valueOf(Integer.valueOf(Math.random() * 123456))
+    .leftPad(6, '0');
+System.debug(uuid1 + '-' + uuid2);
+
+System.debug(
+    URL.getSalesforceBaseUrl().toExternalForm() + '/services/apexrest/Account/'
+);

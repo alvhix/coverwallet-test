@@ -2,6 +2,7 @@ import { LightningElement, track, wire } from "lwc";
 import getContacts from "@salesforce/apex/ContactService.getContacts";
 import getNumberOfRecords from "@salesforce/apex/ContactService.getNumberOfRecords";
 import ACCOUNTS_CONTACTS_CHANNEL from "@salesforce/messageChannel/Accounts_Contacts__c";
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { subscribe, MessageContext } from "lightning/messageService";
 
 const RECORDSPERPAGE = 20;
@@ -13,7 +14,7 @@ const COLUMNS = [
 
 export default class AccountsView extends LightningElement {
     @track accountsSelected;
-    @track data;
+    @track contacts;
     @track page = 1;
     @track totalPages = 1;
     subscription = null;
@@ -27,28 +28,41 @@ export default class AccountsView extends LightningElement {
     })
     wiredContacts({ error, data }) {
         if (data) {
-            this.data = data;
+            this.getTotalPages();
+            this.contacts = data;
         } else if (error) {
-            this.data = undefined;
-            this.showError("Error when extracting accounts", error);
+            this.contacts = undefined;
+            this.showError(
+                "Error when extracting contacts",
+                error.body.message
+            );
             console.error(error);
         }
     }
 
-    @wire(getNumberOfRecords, {
-        accounts: "$accountsSelected"
-    })
-    wiredTotalPages({ error, data }) {
-        if (data) {
-            this.totalPages = this.calculateTotalPages(data);
-        } else if (error) {
-            this.totalPages = undefined;
-            this.showError("Error when extracting total pages", error);
-        }
+    getTotalPages() {
+        getNumberOfRecords({ accounts: this.accountsSelected })
+            .then((result) => {
+                this.totalPages = this.calculateTotalPages(result);
+                this.page =
+                    this.page > this.totalPages ? this.totalPages : this.page;
+            })
+            .catch((error) => {
+                this.totalPages = undefined;
+                this.showError(
+                    "Error when extracting total pages",
+                    error.body.message
+                );
+            });
     }
 
     @wire(MessageContext)
     messageContext;
+
+    // On init
+    connectedCallback() {
+        this.subscribeMessageChannel();
+    }
 
     // Communication between components (LMS)
     subscribeMessageChannel() {
@@ -63,13 +77,18 @@ export default class AccountsView extends LightningElement {
         this.accountsSelected = message;
     }
 
-    connectedCallback() {
-        this.subscribeMessageChannel();
-    }
-
     // Pagination
     calculateTotalPages(numberOfRecords) {
-        return Math.ceil(numberOfRecords / parseInt(this.recordsPerPage, 10));
+        let totalPages = Math.ceil(
+            numberOfRecords / parseInt(this.recordsPerPage, 10)
+        );
+
+        // Minimun page is 1
+        if (totalPages === 0) {
+            totalPages = 1;
+        }
+
+        return totalPages;
     }
 
     previousPage() {
@@ -82,5 +101,15 @@ export default class AccountsView extends LightningElement {
         if (this.page < this.totalPages) {
             this.page++;
         }
+    }
+
+    // Toast
+    showError(title, message) {
+        const evt = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: "error"
+        });
+        this.dispatchEvent(evt);
     }
 }
