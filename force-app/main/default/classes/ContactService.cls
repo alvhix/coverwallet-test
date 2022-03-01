@@ -1,8 +1,17 @@
 public inherited sharing class ContactService {
     public static Database.UpsertResult[] upsertContactsByEmail(
-        List<Account> insertedAccounts,
+        Database.UpsertResult[] accountsResult,
         List<AccountWrapper.Accounts> accountsWrapper
     ) {
+        // Get the inserted accounts
+        Set<Id> accountIds = ContactService.getIds(accountsResult);
+
+        List<Account> insertedAccounts = [
+            SELECT Id, Uuid__c
+            FROM Account
+            WHERE Id IN :accountIds
+        ];
+
         Map<String, Account> insertedAccountsMap = new Map<String, Account>();
         for (Account acct : insertedAccounts) {
             insertedAccountsMap.put(acct.Uuid__c, acct);
@@ -26,9 +35,12 @@ public inherited sharing class ContactService {
     }
 
     public static Database.DeleteResult[] deleteLeftContacts(
-        Set<Id> accountIds,
-        Set<Id> contactIds
+        Database.UpsertResult[] accountsResult,
+        Database.UpsertResult[] contactsResult
     ) {
+        Set<Id> accountIds = ContactService.getIds(accountsResult);
+        Set<Id> contactIds = ContactService.getIds(contactsResult);
+
         List<Contact> allContacts = [
             SELECT Id
             FROM Contact
@@ -43,6 +55,15 @@ public inherited sharing class ContactService {
         }
 
         return Database.delete(contactsToDelete);
+    }
+
+    private static Set<Id> getIds(Database.UpsertResult[] upsertResults) {
+        Set<Id> result = new Set<Id>();
+        for (Database.UpsertResult upsertResult : upsertResults) {
+            result.add(upsertResult.getId());
+        }
+
+        return result;
     }
 
     public static void setAgentOwnership(List<Contact> contacts) {

@@ -3,7 +3,6 @@ public inherited sharing class AccountService {
         List<AccountWrapper.Accounts> accountsWrapper
     ) {
         List<Account> accounts = new List<Account>();
-        List<Contact> contacts = new List<Contact>();
 
         for (AccountWrapper.Accounts acct : accountsWrapper) {
             Account newAcc = new Account(

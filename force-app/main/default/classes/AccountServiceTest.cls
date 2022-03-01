@@ -25,18 +25,16 @@ public with sharing class AccountServiceTest {
         acct.uuid = '123456-123456';
         accountsList.add(acct);
 
-        Database.UpsertResult[] result = AccountService.upsertAccountsByUuid(
+        Database.UpsertResult[] accountResult = AccountService.upsertAccountsByUuid(
             accountsList
         );
 
-        Account accountResult = [
-            SELECT Id
-            FROM Account
-            WHERE Id = :result.get(0).getId()
-        ];
-
         System.debug(accountResult);
-        System.assert(accountResult != null, 'Account was not inserted');
+        System.assertEquals(
+            1,
+            accountResult.size(),
+            'Account was not inserted'
+        );
     }
 
     @isTest
@@ -51,20 +49,9 @@ public with sharing class AccountServiceTest {
             accountsList.add(acct);
         }
 
-        Database.UpsertResult[] result = AccountService.upsertAccountsByUuid(
+        Database.UpsertResult[] accountsResult = AccountService.upsertAccountsByUuid(
             accountsList
         );
-
-        Set<Id> accountIds = new Set<Id>();
-        for (Database.UpsertResult record : result) {
-            accountIds.add(record.getId());
-        }
-
-        List<Account> accountsResult = [
-            SELECT Id
-            FROM Account
-            WHERE Id IN :accountIds
-        ];
 
         System.debug(accountsResult);
         System.assertEquals(

@@ -9,39 +9,23 @@ global without sharing class AccountController {
 
         // Parse JSON to AccountWrapper object
         AccountWrapper obj = AccountWrapper.parse(json);
-        List<AccountWrapper.Accounts> accounts = obj.accounts;
+        List<AccountWrapper.Accounts> accountsWrapper = obj.accounts;
 
         // Upsert accounts by uuid
         Database.UpsertResult[] accountsResult = AccountService.upsertAccountsByUuid(
-            accounts
+            accountsWrapper
         );
-
-        // Get the inserted accounts
-        Set<Id> accountIds = new Set<Id>();
-        for (Database.UpsertResult accountResult : accountsResult) {
-            accountIds.add(accountResult.getId());
-        }
-        List<Account> insertedAccounts = [
-            SELECT Id, Uuid__c
-            FROM Account
-            WHERE Id IN :accountIds
-        ];
 
         // Upsert contacts by email
         Database.UpsertResult[] contactsResult = ContactService.upsertContactsByEmail(
-            insertedAccounts,
-            accounts
+            accountsResult,
+            accountsWrapper
         );
 
         // Delete the left contacts (Optional)
-        Set<Id> contactIds = new Set<Id>();
-        for (Database.UpsertResult contactResult : contactsResult) {
-            contactIds.add(contactResult.getId());
-        }
-
         Database.DeleteResult[] deletedContacts = ContactService.deleteLeftContacts(
-            accountIds,
-            contactIds
+            accountsResult,
+            contactsResult
         );
 
         // Log the results

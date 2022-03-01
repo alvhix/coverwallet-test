@@ -18,11 +18,9 @@ public inherited sharing class DataGenerator implements HttpCalloutMock {
         );
     }
 
-    public HttpResponse generateAccounts(Integer records) {
+    public HttpResponse generateAccounts(Integer recordsToInsert) {
         List<AccountWrapper.Accounts> accounts = new List<AccountWrapper.Accounts>();
-        if (records > 2000) {
-            records = 2000;
-        }
+        Integer records = recordsToInsert > 1000 ? 1000 : recordsToInsert;
 
         for (Integer i = 0; i < records; i++) {
             String name = getName();
