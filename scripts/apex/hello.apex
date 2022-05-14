@@ -5,6 +5,11 @@
 // You can also execute the entire file by running the command:
 //     SFDX: Execute Anonymous Apex with Editor Contents
 
-string tempvar = 'Enter_your_name_here';
-System.debug('Hello World!');
-System.debug('My name is ' + tempvar);
+// Generate new accounts
+Integer numberOfAccounts = 1000;
+DataGenerator generator = new DataGenerator();
+generator.generateAccounts(numberOfAccounts);
+
+// Delete created accounts
+List<Account> accounts = [SELECT Id FROM Account WHERE Name LIKE 'Test%'];
+delete accounts;

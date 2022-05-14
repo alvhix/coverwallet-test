@@ -19,7 +19,7 @@ const COLUMNS = [
 const DELAY = 250;
 
 export default class AccountsView extends LightningElement {
-    @track data;
+    @track accounts;
     @track searchTerm = "";
     @track recordsPerPage = "20";
     @track page = 1;
@@ -34,24 +34,30 @@ export default class AccountsView extends LightningElement {
     })
     wiredAccounts({ error, data }) {
         if (data) {
-            this.data = data;
+            this.getTotalPages();
+            this.accounts = data;
         } else if (error) {
-            this.data = undefined;
-            this.showError("Error when extracting accounts", error);
+            this.accounts = undefined;
+            this.showError(
+                "Error when extracting accounts",
+                error.body.message
+            );
             console.error(error);
         }
     }
 
-    @wire(getNumberOfRecords, {
-        name: "$searchTerm"
-    })
-    wiredTotalPages({ error, data }) {
-        if (data) {
-            this.totalPages = this.calculateTotalPages(data);
-        } else if (error) {
-            this.totalPages = undefined;
-            this.showError("Error when extracting total pages", error);
-        }
+    getTotalPages() {
+        getNumberOfRecords({ name: this.searchTerm })
+            .then((result) => {
+                this.totalPages = this.calculateTotalPages(result);
+            })
+            .catch((error) => {
+                this.totalPages = undefined;
+                this.showError(
+                    "Error when extracting total pages",
+                    error.body.message
+                );
+            });
     }
 
     @wire(MessageContext)
@@ -70,7 +76,16 @@ export default class AccountsView extends LightningElement {
 
     // Pagination
     calculateTotalPages(numberOfRecords) {
-        return Math.ceil(numberOfRecords / parseInt(this.recordsPerPage, 10));
+        let totalPages = Math.ceil(
+            numberOfRecords / parseInt(this.recordsPerPage, 10)
+        );
+
+        // Minimum page is 1
+        if (totalPages === 0) {
+            totalPages = 1;
+        }
+
+        return totalPages;
     }
 
     previousPage() {
@@ -97,13 +112,16 @@ export default class AccountsView extends LightningElement {
 
     // Accounts selected
     rowSelected() {
+        // Reset the array
         this.accountsSelected.splice(0, this.accountsSelected.length);
+        // Add selected elements
         this.template
             .querySelector("lightning-datatable")
             .getSelectedRows()
             .forEach((element) => {
                 this.accountsSelected.push(element.Id);
             });
+        // Send LMS signal to contact component
         publish(
             this.messageContext,
             ACCOUNTS_CONTACTS_CHANNEL,
@@ -114,7 +132,6 @@ export default class AccountsView extends LightningElement {
     // Entries per page
     changedRecordsPerPage(event) {
         this.recordsPerPage = event.detail.value;
-        this.totalPages = this.calculateTotalPages(this.data.length);
         this.page = 1;
     }
 

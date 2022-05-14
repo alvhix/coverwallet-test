@@ -58,19 +58,19 @@ public with sharing class ContactServiceTest {
 
         accountsList.add(acct);
 
-        Database.UpsertResult[] result = ContactService.upsertContactsByEmail(
-            new List<Account>{ insertedAcct },
+        Database.UpsertResult[] accountsResult = AccountService.upsertAccountsByUuid(
+            accountsList
+        );
+        Database.UpsertResult[] contactsResult = ContactService.upsertContactsByEmail(
+            accountsResult,
             accountsList
         );
 
-        Contact contactResult = [
-            SELECT Id
-            FROM Contact
-            WHERE Id = :result.get(0).getId()
-        ];
-
-        System.debug(contactResult);
-        System.assert(contactResult != null, 'Contact was not inserted');
+        System.debug(contactsResult);
+        System.assert(
+            contactsResult[0].getId() != null,
+            'Contact was not inserted'
+        );
     }
 
     @isTest
@@ -101,21 +101,13 @@ public with sharing class ContactServiceTest {
 
         accountsList.add(acct);
 
-        Database.UpsertResult[] result = ContactService.upsertContactsByEmail(
-            new List<Account>{ insertedAcct },
+        Database.UpsertResult[] accountsResult = AccountService.upsertAccountsByUuid(
             accountsList
         );
-
-        Set<Id> contactIds = new Set<Id>();
-        for (Database.UpsertResult record : result) {
-            contactIds.add(record.getId());
-        }
-
-        List<Contact> contactsResult = [
-            SELECT Id
-            FROM Contact
-            WHERE Id IN :contactIds
-        ];
+        Database.UpsertResult[] contactsResult = ContactService.upsertContactsByEmail(
+            accountsResult,
+            accountsList
+        );
 
         System.debug(contactsResult);
         System.assertEquals(
@@ -233,26 +225,23 @@ public with sharing class ContactServiceTest {
         acct.contacts = contactsList;
 
         accountsList.add(acct);
+        Database.UpsertResult[] accountsResult = AccountService.upsertAccountsByUuid(
+            accountsList
+        );
 
-        Database.UpsertResult[] result = ContactService.upsertContactsByEmail(
-            new List<Account>{ insertedAcct },
+        Database.UpsertResult[] contactsResult = ContactService.upsertContactsByEmail(
+            accountsResult,
             accountsList
         );
 
         Database.DeleteResult[] deletedContacts = ContactService.deleteLeftContacts(
-            new Set<Id>{ insertedAcct.Id },
-            new Set<Id>{ result.get(0).getId() }
+            accountsResult,
+            contactsResult
         );
 
-        List<Contact> contactsResult = [
-            SELECT Id
-            FROM Contact
-            WHERE AccountId = :insertedAcct.Id
-        ];
-
         System.assertEquals(
-            1,
-            contactsResult.size(),
+            ContactServiceTest.contacts.size(),
+            deletedContacts.size(),
             'Contacts were not deleted'
         );
     }
