@@ -35,4 +35,11 @@
         <shortDescription>Agent Medium Priority</shortDescription>
         <value>0050900000ARvjEAAT</value>
     </labels>
+    <labels>
+        <fullName>Agent_Default</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Agent Default</shortDescription>
+        <value>00509000004LqQfAAK</value>
+    </labels>
 </CustomLabels>
