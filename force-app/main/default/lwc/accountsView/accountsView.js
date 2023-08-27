@@ -13,7 +13,7 @@ const COLUMNS = [
         type: "currency"
     },
     { label: "Number of Employees", fieldName: "NumberOfEmployees" },
-    { label: "Priority", fieldName: "CustomerPriority__c" },
+    { label: "Priority", fieldName: "Priority__c" },
     { label: "Uuid", fieldName: "Uuid__c" }
 ];
 const DELAY = 250;
