@@ -1,3 +1,3 @@
 trigger AccountTrigger on Account(before insert, before update) {
-    TriggerHandler.handle();
+    fflib_SObjectDomain.triggerHandler(Accounts.class);
 }

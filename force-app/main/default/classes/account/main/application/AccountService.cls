@@ -1,73 +1,30 @@
-public inherited sharing class AccountService implements TriggerService {
-    private AccountRepository accountRepository;
-    private AccountFinder accountFinder;
-
+public inherited sharing class AccountService implements IAccountService {
+    private IAccountSelector accountSelector;
     public AccountService() {
-    }
-
-    public AccountService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-        this.accountFinder = new AccountFinder(accountRepository);
-    }
-
-    public TriggerService init(Type accountRepository) {
-        return new AccountService((AccountRepository) accountRepository.newInstance());
-    }
-
-    public Account get(Id salesforceId) {
-        return accountRepository.get(salesforceId);
+        this.accountSelector = (IAccountSelector) Application.Selector.newInstance(
+            Account.getSObjectType()
+        );
     }
 
     public Account get(String uuid) {
-        return accountFinder.find(uuid);
-    }
-
-    public Id insertAccount(Account account) {
-        return accountRepository.insertAccount(account);
-    }
-
-    public Id updateAccount(Account account) {
-        Account existingAccount = accountFinder.find(account.uuid());
-
-        return accountRepository.updateAccount(account, existingAccount);
-    }
-
-    public void beforeInsert(List<Object> records) {
-        List<Account> accounts = castAccounts(records);
-        for (Account account : accounts) {
-            account.setAccountPriority();
-            account.setAgentOwnership();
+        Account account = this.accountSelector.selectByUuid(uuid);
+        if (account == null) {
+            throw new AccountNotFoundException('Account with uuid ' + uuid + ' not found');
         }
+        return account;
     }
 
-    public void afterInsert(List<Object> records) {
-    }
+    public void insertAccount(Account account, List<Contact> contacts) {
+        fflib_ISObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
+            new List<Schema.SObjectType>{ Account.getSObjectType(), Contact.getSObjectType() }
+        );
 
-    public void beforeUpdate(List<Object> records, Map<Id, Object> oldMap) {
-        List<Account> accounts = castAccounts(records);
-        for (Account account : accounts) {
-            account.setAccountPriority();
-            account.setAgentOwnership();
+        uow.registerNew(account);
+
+        for (Contact cnt : contacts) {
+            uow.registerNew(cnt, Contact.AccountId, account);
         }
-    }
 
-    public void afterUpdate(List<Object> records, List<Object> oldRecords) {
-    }
-
-    public void beforeDelete(Map<Id, Object> oldMap) {
-    }
-
-    public void afterDelete(List<Object> oldRecords) {
-    }
-
-    public void afterUndelete(List<Object> records) {
-    }
-
-    private List<Account> castAccounts(List<Object> accountRecords) {
-        List<Account> accounts = new List<Account>();
-        for (Object record : accountRecords) {
-            accounts.add((Account) record);
-        }
-        return accounts;
+        uow.commitWork();
     }
 }

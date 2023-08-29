@@ -1,3 +1,3 @@
 trigger ContactTrigger on Contact(before insert, before update) {
-    TriggerHandler.handle();
+    fflib_SObjectDomain.triggerHandler(Contacts.class);
 }

@@ -1,6 +1,8 @@
 @RestResource(urlMapping='/account/*')
 global without sharing class AccountController {
-    private static AccountService accountService = new AccountService(new AccountRepositoryImpl());
+    private static IAccountService accountService = (IAccountService) Application.Service.newInstance(
+        IAccountService.class
+    );
 
     @HttpGet
     global static void getAccounts() {
@@ -19,15 +21,30 @@ global without sharing class AccountController {
         String payload = RestContext.request.requestBody.toString();
         AccountDto accountDto = (AccountDto) JSON.deserializeStrict(payload, AccountDto.class);
         accountService.insertAccount(
-            Account.create(
-                accountDto.uuid,
-                accountDto.company_name,
-                accountDto.annual_revenue,
-                accountDto.number_employees,
-                contacts(accountDto.contacts)
-            )
+            new Account(
+                UUID__c = accountDto.uuid,
+                Name = accountDto.company_name,
+                AnnualRevenue = accountDto.annual_revenue,
+                NumberOfEmployees = accountDto.number_employees
+            ),
+            contacts(accountDto.contacts)
         );
+
         ok('Account was inserted successfully');
+    }
+
+    private static List<Contact> contacts(List<AccountDto.Contacts> contactsDto) {
+        List<Contact> contacts = new List<Contact>();
+        for (AccountDto.Contacts contactDto : contactsDto) {
+            contacts.add(
+                new Contact(
+                    FirstName = contactDto.first_name,
+                    LastName = contactDto.last_name,
+                    Email = contactDto.email
+                )
+            );
+        }
+        return contacts;
     }
 
     @HttpPut
@@ -35,26 +52,7 @@ global without sharing class AccountController {
         String payload = RestContext.request.requestBody.toString();
         AccountDto accountDto = (AccountDto) JSON.deserializeStrict(payload, AccountDto.class);
 
-        accountService.updateAccount(
-            Account.create(
-                accountDto.uuid,
-                accountDto.company_name,
-                accountDto.annual_revenue,
-                accountDto.number_employees,
-                contacts(accountDto.contacts)
-            )
-        );
         ok('Account was updated successfully');
-    }
-
-    private static List<Contact> contacts(List<AccountDto.Contacts> contactsDto) {
-        List<Contact> contacts = new List<Contact>();
-        for (AccountDto.Contacts contactDto : contactsDto) {
-            contacts.add(
-                Contact.create(contactDto.first_name, contactDto.last_name, contactDto.email)
-            );
-        }
-        return contacts;
     }
 
     private static void ok(Object responseBody) {
