@@ -1,10 +1,9 @@
 public class Contacts extends fflib_SObjectDomain {
-    private IContactService contactService;
+    private IAccountsSelector accountSelector;
+
     public Contacts(List<Contact> sObjectList) {
         super(sObjectList);
-        this.contactService = (IContactService) Application.Service.newInstance(
-            IContactService.class
-        );
+        this.accountSelector = AccountsSelector.newInstance();
     }
 
     public override void onBeforeInsert() {
@@ -18,7 +17,19 @@ public class Contacts extends fflib_SObjectDomain {
     }
 
     public void setAgentOwnership(List<Contact> contacts) {
-        this.contactService.setAgentOwnership(contacts);
+        Set<Id> accountIds = new Set<Id>();
+        for (Contact contact : contacts) {
+            accountIds.add(contact.AccountId);
+        }
+
+        Map<Id, Account> accounts = new Map<Id, Account>(
+            this.accountSelector.selectById(accountIds)
+        );
+
+        for (Contact contact : contacts) {
+            Id ownerId = accounts.get(contact.AccountId).OwnerId;
+            contact.OwnerId = ownerId;
+        }
     }
 
     public class Constructor implements fflib_SObjectDomain.IConstructable {

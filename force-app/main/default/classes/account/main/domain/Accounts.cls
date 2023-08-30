@@ -7,16 +7,18 @@ public class Accounts extends fflib_SObjectDomain {
         super(sObjectList);
     }
 
+    public static Accounts newInstance(List<Account> sObjectList) {
+        return (Accounts) Application.Domain.newInstance(sObjectList);
+    }
+
     public override void onBeforeInsert() {
         List<Account> accounts = (List<Account>) super.Records;
         setAccountPriority(accounts);
-        setAgentOwnership(accounts);
     }
 
     public override void onBeforeUpdate(Map<Id, SObject> existingRecords) {
         List<Account> accounts = (List<Account>) super.Records;
         setAccountPriority(accounts);
-        setAgentOwnership(accounts);
     }
 
     public void setAccountPriority(List<Account> accounts) {
@@ -25,25 +27,28 @@ public class Accounts extends fflib_SObjectDomain {
 
         for (Account account : accounts) {
             if (account.AnnualRevenue <= lowRevenue) {
-                account.Priority__c = LOW_PRIORITY;
+                lowPriorityAccount(account);
             } else if (account.AnnualRevenue <= mediumRevenue) {
-                account.Priority__c = MEDIUM_PRIORITY;
+                mediumPriorityAccount(account);
             } else if (account.AnnualRevenue > mediumRevenue) {
-                account.Priority__c = HIGH_PRIORITY;
+                highPriorityAccount(account);
             }
         }
     }
 
-    public void setAgentOwnership(List<Account> accounts) {
-        for (Account account : accounts) {
-            if (account.Priority__c == LOW_PRIORITY) {
-                account.OwnerId = Label.Agent_Low_Priority;
-            } else if (account.Priority__c == MEDIUM_PRIORITY) {
-                account.OwnerId = Label.Agent_Medium_Priority;
-            } else if (account.Priority__c == HIGH_PRIORITY) {
-                account.OwnerId = Label.Agent_High_Priority;
-            }
-        }
+    private void lowPriorityAccount(Account account) {
+        account.Priority__c = MEDIUM_PRIORITY;
+        account.OwnerId = Label.Agent_Medium_Priority;
+    }
+
+    private void mediumPriorityAccount(Account account) {
+        account.Priority__c = HIGH_PRIORITY;
+        account.OwnerId = Label.Agent_High_Priority;
+    }
+
+    private void highPriorityAccount(Account account) {
+        account.Priority__c = LOW_PRIORITY;
+        account.OwnerId = Label.Agent_Low_Priority;
     }
 
     public class Constructor implements fflib_SObjectDomain.IConstructable {

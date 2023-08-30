@@ -1,9 +1,9 @@
 public class ContactMother {
     public static Contact singleRandom() {
-        return Contact.create(
-            TestGenerator.randomString(10),
-            TestGenerator.randomString(15),
-            TestGenerator.randomEmail()
+        return new Contact(
+            FirstName = TestGenerator.randomString(10),
+            LastName = TestGenerator.randomString(15),
+            Email = TestGenerator.randomEmail()
         );
     }
 

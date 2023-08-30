@@ -32,18 +32,12 @@ public class Application {
 
     // Configure and create the ServiceFactory for this Application
     public static final fflib_Application.ServiceFactory Service = new fflib_Application.ServiceFactory(
-        new Map<Type, Type>{
-            IAccountService.class => AccountService.class,
-            IContactService.class => ContactService.class
-        }
+        new Map<Type, Type>{ IAccountService.class => AccountService.class }
     );
 
     // Configure and create the SelectorFactory for this Application
     public static final fflib_Application.SelectorFactory Selector = new fflib_Application.SelectorFactory(
-        new Map<SObjectType, Type>{
-            Account.SObjectType => AccountSelector.class,
-            Contact.SObjectType => AccountSelector.class
-        }
+        new Map<SObjectType, Type>{ Account.SObjectType => AccountsSelector.class }
     );
 
     // Configure and create the DomainFactory for this Application

@@ -1,15 +1,16 @@
-public inherited sharing class AccountSelector extends fflib_SObjectSelector implements IAccountSelector {
+public inherited sharing class AccountsSelector extends fflib_SObjectSelector implements IAccountsSelector {
     /* 1. sObjectField list */
     private List<String> additionalSObjectFieldList = new List<String>{
         'Id',
         'Name',
         'AnnualRevenue',
-        'Priority__c'
+        'Priority__c',
+        'OwnerId'
     };
 
     /* 2. Boilerplate code */
-    public static Accounts newInstance() {
-        return (Accounts) Application.Selector.newInstance(Account.getSObjectType());
+    public static IAccountsSelector newInstance() {
+        return (IAccountsSelector) Application.Selector.newInstance(Account.getSObjectType());
     }
 
     public Schema.SObjectType getSObjectType() {
@@ -50,7 +51,7 @@ public inherited sharing class AccountSelector extends fflib_SObjectSelector imp
         }
 
         fflib_QueryFactory qf = getQueryFactory();
-        qf.selectFields(getSObjectFieldListWithRelatedFields());
+        qf.selectFields(getSObjectFieldList());
         qf.setCondition('UUID__c = :uuid');
         List<Account> recordList = Database.query(qf.toSOQL());
         return recordList.isEmpty() ? null : recordList[0];
@@ -62,7 +63,7 @@ public inherited sharing class AccountSelector extends fflib_SObjectSelector imp
         }
 
         fflib_QueryFactory qf = getQueryFactory();
-        qf.selectFields(getSObjectFieldListWithRelatedFields());
+        qf.selectFields(getSObjectFieldList());
         qf.setCondition('Id IN :salesforceId');
         return Database.query(qf.toSOQL());
     }

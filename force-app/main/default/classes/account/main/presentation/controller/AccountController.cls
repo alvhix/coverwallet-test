@@ -1,8 +1,6 @@
 @RestResource(urlMapping='/account/*')
 global without sharing class AccountController {
-    private static IAccountService accountService = (IAccountService) Application.Service.newInstance(
-        IAccountService.class
-    );
+    private static IAccountService accService = AccountService.newInstance();
 
     @HttpGet
     global static void getAccounts() {
@@ -10,7 +8,7 @@ global without sharing class AccountController {
             RestContext.request.requestURI.lastIndexOf('/') + 1
         );
         try {
-            ok(accountService.get(uuid));
+            ok(accService.get(uuid));
         } catch (AccountNotFoundException ex) {
             notFound(ex.getMessage());
         }
@@ -20,7 +18,7 @@ global without sharing class AccountController {
     global static void insertAccount() {
         String payload = RestContext.request.requestBody.toString();
         AccountDto accountDto = (AccountDto) JSON.deserializeStrict(payload, AccountDto.class);
-        accountService.insertAccount(
+        accService.insertAccount(
             new Account(
                 UUID__c = accountDto.uuid,
                 Name = accountDto.company_name,
