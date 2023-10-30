@@ -8,11 +8,6 @@ public inherited sharing class AccountsSelector extends fflib_SObjectSelector im
         'OwnerId'
     };
 
-    /* 2. Boilerplate code */
-    public static IAccountsSelector newInstance() {
-        return (IAccountsSelector) Application.Selector.newInstance(Account.getSObjectType());
-    }
-
     public Schema.SObjectType getSObjectType() {
         return Account.getSObjectType();
     }

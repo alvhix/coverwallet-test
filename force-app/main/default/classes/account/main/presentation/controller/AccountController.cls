@@ -1,9 +1,11 @@
 @RestResource(urlMapping='/account/*')
 global without sharing class AccountController {
-    private static IAccountService accService = AccountService.newInstance();
+    private static IAccountService accService = (IAccountService) Application.Service.newInstance(
+        IAccountService.class
+    );
 
     @HttpGet
-    global static void getAccounts() {
+    global static void getAccount() {
         String uuid = RestContext.request.requestURI.substring(
             RestContext.request.requestURI.lastIndexOf('/') + 1
         );
@@ -49,6 +51,8 @@ global without sharing class AccountController {
     global static void updateAccount() {
         String payload = RestContext.request.requestBody.toString();
         AccountDto accountDto = (AccountDto) JSON.deserializeStrict(payload, AccountDto.class);
+
+        //accService.updateAccount();
 
         ok('Account was updated successfully');
     }

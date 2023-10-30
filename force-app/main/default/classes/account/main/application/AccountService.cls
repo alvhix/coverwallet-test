@@ -1,15 +1,13 @@
 public inherited sharing class AccountService implements IAccountService {
     private IAccountsSelector accountSelector;
     public AccountService() {
-        this.accountSelector = AccountsSelector.newInstance();
-    }
-
-    public static IAccountService newInstance() {
-        return (IAccountService) Application.Service.newInstance(IAccountService.class);
+        this.accountSelector = (IAccountsSelector) Application.Selector.newInstance(
+            Account.getSObjectType()
+        );
     }
 
     public Account get(String uuid) {
-        Account account = this.accountSelector.selectByUuid(uuid);
+        Account account = accountSelector.selectByUuid(uuid);
         if (account == null) {
             throw new AccountNotFoundException('Account with uuid ' + uuid + ' not found');
         }

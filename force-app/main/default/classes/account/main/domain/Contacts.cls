@@ -3,7 +3,9 @@ public class Contacts extends fflib_SObjectDomain {
 
     public Contacts(List<Contact> sObjectList) {
         super(sObjectList);
-        this.accountSelector = AccountsSelector.newInstance();
+        this.accountSelector = (IAccountsSelector) Application.Selector.newInstance(
+            Account.getSObjectType()
+        );
     }
 
     public override void onBeforeInsert() {

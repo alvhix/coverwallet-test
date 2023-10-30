@@ -2,7 +2,7 @@
 private class AccountsTest {
     @IsTest
     static void newInstanceTest() {
-        Accounts instanceByRecords = Accounts.newInstance(new List<Account>());
+        Accounts instanceByRecords = (Accounts) Application.Domain.newInstance(new List<Account>());
     }
 
     @IsTest
@@ -22,32 +22,32 @@ private class AccountsTest {
     static void validateLowPriorityAccount() {
         List<Account> records = new List<Account>{ AccountMother.lowPriorityAccount() };
 
-        Accounts domain = Accounts.newInstance(records);
+        Accounts domain = (Accounts) Application.Domain.newInstance(records);
         domain.setAccountPriority(records);
 
-        Assert.areEqual(records.get(0).Priority__c, Accounts.LOW_PRIORITY);
-        Assert.areEqual(records.get(0).OwnerId, Label.Agent_Low_Priority);
+        Assert.areEqual(Accounts.LOW_PRIORITY, records.get(0).Priority__c);
+        Assert.areEqual(Label.Agent_Low_Priority, records.get(0).OwnerId);
     }
 
     @IsTest
     static void validateMediumPriorityAccount() {
         List<Account> records = new List<Account>{ AccountMother.mediumPriorityAccount() };
 
-        Accounts domain = Accounts.newInstance(records);
+        Accounts domain = (Accounts) Application.Domain.newInstance(records);
         domain.setAccountPriority(records);
 
-        Assert.areEqual(records.get(0).Priority__c, Accounts.MEDIUM_PRIORITY);
-        Assert.areEqual(records.get(0).OwnerId, Label.Agent_Medium_Priority);
+        Assert.areEqual(Accounts.MEDIUM_PRIORITY, records.get(0).Priority__c);
+        Assert.areEqual(Label.Agent_Medium_Priority, records.get(0).OwnerId);
     }
 
     @IsTest
     static void validateHighPriorityAccount() {
         List<Account> records = new List<Account>{ AccountMother.highPriorityAccount() };
 
-        Accounts domain = Accounts.newInstance(records);
+        Accounts domain = (Accounts) Application.Domain.newInstance(records);
         domain.setAccountPriority(records);
 
-        Assert.areEqual(records.get(0).Priority__c, Accounts.HIGH_PRIORITY);
-        Assert.areEqual(records.get(0).OwnerId, Label.Agent_High_Priority);
+        Assert.areEqual(Accounts.HIGH_PRIORITY, records.get(0).Priority__c);
+        Assert.areEqual(Label.Agent_High_Priority, records.get(0).OwnerId);
     }
 }

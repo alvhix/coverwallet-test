@@ -7,10 +7,6 @@ public class Accounts extends fflib_SObjectDomain {
         super(sObjectList);
     }
 
-    public static Accounts newInstance(List<Account> sObjectList) {
-        return (Accounts) Application.Domain.newInstance(sObjectList);
-    }
-
     public override void onBeforeInsert() {
         List<Account> accounts = (List<Account>) super.Records;
         setAccountPriority(accounts);
@@ -37,18 +33,18 @@ public class Accounts extends fflib_SObjectDomain {
     }
 
     private void lowPriorityAccount(Account account) {
+        account.Priority__c = LOW_PRIORITY;
+        account.OwnerId = Label.Agent_Low_Priority;
+    }
+
+    private void mediumPriorityAccount(Account account) {
         account.Priority__c = MEDIUM_PRIORITY;
         account.OwnerId = Label.Agent_Medium_Priority;
     }
 
-    private void mediumPriorityAccount(Account account) {
+    private void highPriorityAccount(Account account) {
         account.Priority__c = HIGH_PRIORITY;
         account.OwnerId = Label.Agent_High_Priority;
-    }
-
-    private void highPriorityAccount(Account account) {
-        account.Priority__c = LOW_PRIORITY;
-        account.OwnerId = Label.Agent_Low_Priority;
     }
 
     public class Constructor implements fflib_SObjectDomain.IConstructable {
