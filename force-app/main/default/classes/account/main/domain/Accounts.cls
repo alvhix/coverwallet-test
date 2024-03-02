@@ -8,20 +8,18 @@ public class Accounts extends fflib_SObjectDomain {
     }
 
     public override void onBeforeInsert() {
-        List<Account> accounts = (List<Account>) super.Records;
-        setAccountPriority(accounts);
+        setAccountPriority();
     }
 
     public override void onBeforeUpdate(Map<Id, SObject> existingRecords) {
-        List<Account> accounts = (List<Account>) super.Records;
-        setAccountPriority(accounts);
+        setAccountPriority();
     }
 
-    public void setAccountPriority(List<Account> accounts) {
+    public void setAccountPriority() {
         Integer lowRevenue = Integer.valueOf(Label.Account_Low_Revenue);
         Integer mediumRevenue = Integer.valueOf(Label.Account_Medium_Revenue);
 
-        for (Account account : accounts) {
+        for (Account account : (List<Account>) super.Records) {
             if (account.AnnualRevenue <= lowRevenue) {
                 lowPriorityAccount(account);
             } else if (account.AnnualRevenue <= mediumRevenue) {

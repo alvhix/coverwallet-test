@@ -1,30 +1,13 @@
-public inherited sharing class AccountService implements IAccountService {
-    private IAccountsSelector accountSelector;
-    public AccountService() {
-        this.accountSelector = (IAccountsSelector) Application.Selector.newInstance(
-            Account.getSObjectType()
-        );
+public with sharing class AccountService {
+    public static Account get(String uuid) {
+        return service().get(uuid);
     }
 
-    public Account get(String uuid) {
-        Account account = accountSelector.selectByUuid(uuid);
-        if (account == null) {
-            throw new AccountNotFoundException('Account with uuid ' + uuid + ' not found');
-        }
-        return account;
+    public static void insertAccount(Account account, List<Contact> contacts) {
+        service().insertAccount(account, contacts);
     }
 
-    public void insertAccount(Account account, List<Contact> contacts) {
-        fflib_ISObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
-            new List<Schema.SObjectType>{ Account.getSObjectType(), Contact.getSObjectType() }
-        );
-
-        uow.registerNew(account);
-
-        for (Contact cnt : contacts) {
-            uow.registerNew(cnt, Contact.AccountId, account);
-        }
-
-        uow.commitWork();
+    private static IAccountService service() {
+        return (IAccountService) Application.Service.newInstance(IAccountService.class);
     }
 }

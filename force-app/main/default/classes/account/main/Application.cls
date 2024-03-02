@@ -32,7 +32,7 @@ public class Application {
 
     // Configure and create the ServiceFactory for this Application
     public static final fflib_Application.ServiceFactory Service = new fflib_Application.ServiceFactory(
-        new Map<Type, Type>{ IAccountService.class => AccountService.class }
+        new Map<Type, Type>{ IAccountService.class => AccountServiceImpl.class }
     );
 
     // Configure and create the SelectorFactory for this Application
