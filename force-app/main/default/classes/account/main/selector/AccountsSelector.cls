@@ -35,8 +35,8 @@ public inherited sharing class AccountsSelector extends fflib_SObjectSelector im
         return new List<Schema.SObjectField>{};
     }
 
-    public Account selectById(Id salesforceId) {
-        List<Account> recordList = selectById(new Set<Id>{ salesforceId });
+    public Account selectById(Id id) {
+        List<Account> recordList = selectById(new Set<Id>{ id });
         return recordList.isEmpty() ? null : recordList[0];
     }
 
