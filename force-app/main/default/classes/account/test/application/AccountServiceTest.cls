@@ -44,7 +44,7 @@ private class AccountServiceTest {
         mockApplication();
 
         // When
-        AccountService.upsertAccounts(new List<Account> {acc});
+        AccountService.upsertAccounts(new List<Account>{ acc });
 
         // Then
         ((fflib_ISObjectUnitOfWork) mocks.verify(uowMock, 1)).commitWork();

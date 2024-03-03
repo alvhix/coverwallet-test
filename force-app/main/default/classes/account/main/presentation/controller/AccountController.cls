@@ -1,5 +1,5 @@
 @RestResource(urlMapping='/account/*')
-global without sharing class AccountController {
+global with sharing class AccountController {
     @HttpGet
     global static void getAccount() {
         String uuid = RestContext.request.requestURI.substring(
@@ -26,7 +26,7 @@ global without sharing class AccountController {
             internalServerError(ex.getMessage());
         }
     }
-
+    
     private static List<Account> accounts(List<AccountDto.Accounts> accountsDto) {
         List<Account> accountsResult = new List<Account>();
 

@@ -25,4 +25,34 @@ public inherited sharing class AccountServiceImpl implements IAccountService {
 
         return accounts;
     }
+
+    
+    public List<Account> getAccounts(
+        String name,
+        Integer recordsPerPage,
+        Integer page
+    ) {
+        Integer offset = recordsPerPage * (page - 1);
+        String search = '%' + name + '%';
+
+        return [
+            SELECT
+                Name,
+                AnnualRevenue,
+                NumberOfEmployees,
+                Priority__c,
+                UUID__c
+            FROM Account
+            WHERE Name LIKE :search
+            LIMIT :recordsPerPage
+            OFFSET :offset
+        ];
+    }
+
+    public Integer getNumberOfAccounts(String name) {
+        String search = '%' + name + '%';
+
+        return [SELECT COUNT() FROM Account WHERE Name LIKE :search];
+    }
+
 }

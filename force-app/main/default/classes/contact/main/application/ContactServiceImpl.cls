@@ -17,4 +17,23 @@ public inherited sharing class ContactServiceImpl implements IContactService {
 
         uow.commitWork();
     }
+
+    public List<Contact> getContacts(
+        List<Id> accounts,
+        Integer recordsPerPage,
+        Integer page
+    ) {
+        Integer offset = recordsPerPage * (page - 1);
+        return [
+            SELECT FirstName, LastName, Email
+            FROM Contact
+            WHERE AccountId IN :accounts
+            LIMIT :recordsPerPage
+            OFFSET :offset
+        ];
+    }
+
+    public Integer getNumberOfContacts(List<Id> accounts) {
+        return [SELECT COUNT() FROM Contact WHERE AccountId IN :accounts];
+    }
 }
