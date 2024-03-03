@@ -1,6 +1,6 @@
 import { LightningElement, track, wire } from "lwc";
 import getContacts from "@salesforce/apex/ContactService.getContacts";
-import getNumberOfRecords from "@salesforce/apex/ContactService.getNumberOfRecords";
+import getNumberOfContacts from "@salesforce/apex/ContactService.getNumberOfContacts";
 import ACCOUNTS_CONTACTS_CHANNEL from "@salesforce/messageChannel/Accounts_Contacts__c";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { subscribe, MessageContext } from "lightning/messageService";
@@ -41,7 +41,7 @@ export default class AccountsView extends LightningElement {
     }
 
     getTotalPages() {
-        getNumberOfRecords({ accounts: this.accountsSelected })
+        getNumberOfContacts({ accounts: this.accountsSelected })
             .then((result) => {
                 this.totalPages = this.calculateTotalPages(result);
                 this.page =

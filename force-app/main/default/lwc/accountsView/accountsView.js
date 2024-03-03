@@ -1,7 +1,7 @@
 import { LightningElement, track, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getAccounts from "@salesforce/apex/AccountService.getAccounts";
-import getNumberOfRecords from "@salesforce/apex/AccountService.getNumberOfRecords";
+import getNumberOfAccounts from "@salesforce/apex/AccountService.getNumberOfAccounts";
 import ACCOUNTS_CONTACTS_CHANNEL from "@salesforce/messageChannel/Accounts_Contacts__c";
 import { MessageContext, publish } from "lightning/messageService";
 
@@ -13,8 +13,8 @@ const COLUMNS = [
         type: "currency"
     },
     { label: "Number of Employees", fieldName: "NumberOfEmployees" },
-    { label: "Priority", fieldName: "CustomerPriority__c" },
-    { label: "Uuid", fieldName: "Uuid__c" }
+    { label: "Priority", fieldName: "Priority__c" },
+    { label: "UUID", fieldName: "UUID__c" }
 ];
 const DELAY = 250;
 
@@ -47,7 +47,7 @@ export default class AccountsView extends LightningElement {
     }
 
     getTotalPages() {
-        getNumberOfRecords({ name: this.searchTerm })
+        getNumberOfAccounts({ name: this.searchTerm })
             .then((result) => {
                 this.totalPages = this.calculateTotalPages(result);
             })
