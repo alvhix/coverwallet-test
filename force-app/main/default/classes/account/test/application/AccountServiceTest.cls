@@ -37,19 +37,16 @@ private class AccountServiceTest {
     }
 
     @IsTest
-    static void testInsertAccount() {
+    static void testUpsertAccount() {
         // given
         Account acc = new Account(Name = 'Test');
-        Contact cont = new Contact(FirstName = 'Test', LastName = 'Test');
+
         mockApplication();
 
         // When
-        AccountService.insertAccount(acc, new List<Contact>{ cont });
+        AccountService.upsertAccounts(new List<Account> {acc});
 
         // Then
         ((fflib_ISObjectUnitOfWork) mocks.verify(uowMock, 1)).commitWork();
-        ((fflib_ISObjectUnitOfWork) mocks.verify(uowMock)).registerNew(acc);
-        ((fflib_ISObjectUnitOfWork) mocks.verify(uowMock))
-            .registerNew(cont, Contact.AccountId, acc);
     }
 }

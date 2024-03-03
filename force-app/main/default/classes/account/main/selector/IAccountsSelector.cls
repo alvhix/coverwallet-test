@@ -1,5 +1,6 @@
 public interface IAccountsSelector extends fflib_ISObjectSelector {
-    Account selectById(Id salesforceId);
+    Account selectById(Id id);
     Account selectByUuid(String uuid);
-    List<Account> selectById(Set<Id> salesforceId);
+    List<Account> selectById(Set<Id> ids);
+    List<Account> selectByUuid(Set<String> uuids);
 }

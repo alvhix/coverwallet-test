@@ -3,8 +3,8 @@ public with sharing class AccountService {
         return service().get(uuid);
     }
 
-    public static void insertAccount(Account account, List<Contact> contacts) {
-        service().insertAccount(account, contacts);
+    public static List<Account> upsertAccounts(List<Account> accounts) {
+        return service().upsertAccounts(accounts);
     }
 
     private static IAccountService service() {

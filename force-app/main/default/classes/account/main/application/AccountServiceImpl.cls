@@ -14,15 +14,15 @@ public inherited sharing class AccountServiceImpl implements IAccountService {
         return account;
     }
 
-    public void insertAccount(Account account, List<Contact> contacts) {
+    public List<Account> upsertAccounts(List<Account> accounts) {
         fflib_ISObjectUnitOfWork uow = Application.UnitOfWork.newInstance();
+        AccountUpsertWork accountUpsertWork = new AccountUpsertWork();
+        accountUpsertWork.registerAccountUpsert(accounts);
 
-        uow.registerNew(account);
-
-        for (Contact cnt : contacts) {
-            uow.registerNew(cnt, Contact.AccountId, account);
-        }
+        uow.registerWork(accountUpsertWork);
 
         uow.commitWork();
+
+        return accounts;
     }
 }

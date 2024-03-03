@@ -1,15 +1,16 @@
-public inherited sharing class AccountsSelector extends fflib_SObjectSelector implements IAccountsSelector {
+public inherited sharing class ContactsSelector extends fflib_SObjectSelector implements IContactsSelector {
     /* 1. sObjectField list */
     private List<String> additionalSObjectFieldList = new List<String>{
         'Id',
         'Name',
-        'AnnualRevenue',
-        'Priority__c',
-        'OwnerId'
+        'ExternalId__c',
+        'FirstName',
+        'LastName',
+        'AccountId'
     };
 
     public Schema.SObjectType getSObjectType() {
-        return Account.getSObjectType();
+        return Contact.getSObjectType();
     }
 
     public fflib_QueryFactory getQueryFactory() {
@@ -17,9 +18,9 @@ public inherited sharing class AccountsSelector extends fflib_SObjectSelector im
     }
 
     public List<Schema.SObjectField> getSObjectFieldList() {
-        Map<String, Schema.SObjectField> accountFields = Account.SObjectType.getDescribe()
+        Map<String, Schema.SObjectField> contactFields = Contact.SObjectType.getDescribe()
             .fields.getMap();
-        return new List<Schema.SObjectField>(accountFields.values());
+        return new List<Schema.SObjectField>(contactFields.values());
     }
 
     public List<String> getSObjectFieldListWithRelatedFields() {
@@ -35,12 +36,12 @@ public inherited sharing class AccountsSelector extends fflib_SObjectSelector im
         return new List<Schema.SObjectField>{};
     }
 
-    public Account selectById(Id id) {
-        List<Account> recordList = selectById(new Set<Id>{ id });
+    public Contact selectById(Id id) {
+        List<Contact> recordList = selectById(new Set<Id>{ id });
         return recordList.isEmpty() ? null : recordList[0];
     }
 
-    public Account selectByUuid(String uuid) {
+    public Contact selectByUuid(String uuid) {
         if (String.isBlank(uuid)) {
             return null;
         }
@@ -48,24 +49,13 @@ public inherited sharing class AccountsSelector extends fflib_SObjectSelector im
         fflib_QueryFactory qf = getQueryFactory();
         qf.selectFields(getSObjectFieldList());
         qf.setCondition('UUID__c = :uuid');
-        List<Account> recordList = Database.query(qf.toSOQL());
+        List<Contact> recordList = Database.query(qf.toSOQL());
         return recordList.isEmpty() ? null : recordList[0];
     }
 
-    public List<Account> selectByUuid(Set<String> uuids) {
-        if (uuids.isEmpty()) {
-            return new List<Account>();
-        }
-
-        fflib_QueryFactory qf = getQueryFactory();
-        qf.selectFields(getSObjectFieldList());
-        qf.setCondition('UUID__c IN :uuids');
-        return Database.query(qf.toSOQL());
-    }
-
-    public List<Account> selectById(Set<Id> ids) {
+    public List<Contact> selectById(Set<Id> ids) {
         if (ids.isEmpty()) {
-            return new List<Account>();
+            return new List<Contact>();
         }
 
         fflib_QueryFactory qf = getQueryFactory();
