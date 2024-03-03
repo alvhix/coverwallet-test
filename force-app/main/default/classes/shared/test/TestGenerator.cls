@@ -1,4 +1,13 @@
 public class TestGenerator {
+    private static Integer myNumber = 1;
+
+    public static Id getFakeId(Schema.SObjectType sObjectType) {
+        String index = String.valueOf(myNumber++);
+        return (Id) (sObjectType.getDescribe().getKeyPrefix() +
+        '0'.repeat(12 - index.length()) +
+        index);
+    }
+
     public static String randomString(Integer len) {
         final String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
         String randStr = '';

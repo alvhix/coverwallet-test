@@ -8,6 +8,16 @@ public class AccountMother {
         );
     }
 
+    public static Account randomWithId(String uuid) {
+        return new Account(
+            Id = TestGenerator.getFakeId(Account.getSObjectType()),
+            UUID__c = uuid,
+            Name = TestGenerator.randomString(8),
+            AnnualRevenue = TestGenerator.randomDecimal(5000, 120000),
+            NumberOfEmployees = TestGenerator.randomInteger(1, 150)
+        );
+    }
+
     public static Account lowPriorityAccount() {
         return new Account(
             UUID__c = new Uuid().getValue(),

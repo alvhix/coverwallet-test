@@ -3,15 +3,6 @@ public class Contacts extends fflib_SObjectDomain implements IContacts {
         super(sObjectList);
     }
 
-    public Set<String> getUuids() {
-        Set<String> uuids = new Set<String>();
-        for (Contact cont : (List<Contact>) Records) {
-            uuids.add(cont.ExternalId__c.substring(0, 36));
-        }
-
-        return uuids;
-    }
-
     public void setAccountId(List<Account> accounts) {
         for (Account acc : accounts) {
             for (Contact cont : (List<Contact>) super.Records) {
