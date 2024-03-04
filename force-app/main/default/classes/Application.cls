@@ -40,10 +40,7 @@ public class Application {
 
     // Configure and create the SelectorFactory for this Application
     public static final fflib_Application.SelectorFactory Selector = new fflib_Application.SelectorFactory(
-        new Map<SObjectType, Type>{
-            Account.SObjectType => AccountsSelector.class,
-            Contact.SObjectType => ContactsSelector.class
-        }
+        new Map<SObjectType, Type>{ Account.SObjectType => AccountsSelector.class }
     );
 
     // Configure and create the DomainFactory for this Application

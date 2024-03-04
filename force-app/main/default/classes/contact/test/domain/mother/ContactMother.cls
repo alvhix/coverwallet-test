@@ -17,11 +17,31 @@ public class ContactMother {
         );
     }
 
+    public static Contact singleRandom(Id accountId) {
+        String email = TestGenerator.randomEmail();
+        return new Contact(
+            FirstName = TestGenerator.randomString(10),
+            LastName = TestGenerator.randomString(15),
+            Email = email,
+            AccountId = accountId
+        );
+    }
+
     public static List<Contact> byUuid(String uuid) {
         List<Contact> contacts = new List<Contact>();
         Integer random = TestGenerator.randomInteger(1, 6);
         for (Integer i = 0; i < random; i++) {
             contacts.add(singleRandom(uuid));
+        }
+
+        return contacts;
+    }
+
+    public static List<Contact> byAccountId(Id accountId) {
+        List<Contact> contacts = new List<Contact>();
+        Integer random = TestGenerator.randomInteger(1, 6);
+        for (Integer i = 0; i < random; i++) {
+            contacts.add(singleRandom(accountId));
         }
 
         return contacts;
